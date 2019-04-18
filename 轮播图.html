@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta charset="UTF-8">
+    <title>轮播图</title>
+    <style>
+        body {
+            background-color: slategray;
+        }
+        .container {
+            position: relative;
+            width: 500px;
+            height: 300px;
+            border: 1px solid #ccc;
+            margin: 100px auto;
+            overflow: hidden;
+            box-shadow: 0 0 5px #000;
+        }
+        img {
+            width: 500px;
+            height: 300px;
+            float: left;
+            vertical-align: middle;
+        }
+        .img-box {
+            position: absolute;
+            height: 300px;
+            width: 3000px;
+        }
+        .left,
+        .right {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            display: block;
+            width: 25px;
+            height: 40px;
+            text-align: center;
+            line-height: 40px;
+            color: white;
+            cursor: pointer;
+        }
+        .left {
+            left: 0 ;
+        }
+        .right {
+            right: 0;
+        }
+        .bg:hover {
+            background-color: rgba( 0,0,0, .4);
+        }
+        .arrow {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 104px;
+            height: 20px;
+        }
+        .arrow span {
+            float: left;
+            text-align: center;
+            line-height: 20px;
+            width: 20px;
+            margin: 0 3px;
+            height: 20px;
+            background-color: rgba(0,0,0, .5);
+            border-radius: 50%;
+            color: #999;
+            cursor: pointer;
+        }
+        .arrow span.on {
+            color: white;
+            background-color: #ee3333;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="img-box" style="left: 0;">
+        <a href="#">
+            <img src="images/pi.gif" alt="">
+        </a>
+        <a href="#">
+            <img src="images/p2.gif" alt="">
+        </a>
+        <a href="#">
+            <img src="images/p3.gif" alt="">
+        </a>
+        <a href="#">
+            <img src="images/p4.gif" alt="">
+        </a>
+    </div>
+    <a class="left bg"> < </a>
+    <a class="right bg"> > </a>
+    <div class="arrow">
+        <span>1</span>
+        <span>2</span>
+        <span>3</span>
+        <span>4</span>
+    </div>
+</div>
+
+<script>
+    // 查找到类选择器 并进行 声明  （querySelector 是 查找选择器的意思）
+    // 点击左箭头 触发函数
+    var left = document.querySelector(".left");
+    left.onclick = function () {
+        goLeft();
+
+    };
+    // 点击右箭头 触发函数
+    var right = document.querySelector(".right");
+    right.onclick = function () {
+        goRight();
+    };
+    // 函数（左箭头控制模块
+    var imgBox = document.querySelector(".img-box");
+    function goLeft() {
+        if (parseInt(imgBox.style.left) === -1500) {
+            imgBox.style.left = 0+"px";
+        } else {
+            var newLeft = parseInt(imgBox.style.left)-500;
+            imgBox.style.left = newLeft + "px";
+        }
+        // 通过 改变index的值 来使类名on 加到对应的span身上 来改变小圆点的样式
+        index++;
+        if(index > 3){
+            index = 0;
+        }
+        toOn();
+    }
+    // 函数（右箭头控制模块
+    function goRight() {
+        if (parseInt(imgBox.style.left) === 0) {
+            imgBox.style.left = -1500+"px";
+        } else {
+            var newLeft = parseInt(imgBox.style.left)+500;
+            imgBox.style.left = newLeft + "px";
+        }
+        // 通过 改变index的值 来使类名on 加到对应的span身上 来改变小圆点的样式
+        index--;
+        if (index < 0) {
+            index = 3;
+        }
+        toOn();
+    }
+    // 下面设置 自动轮播
+    var timer = null;
+    function autoPlay() {
+        timer = setInterval(goLeft,1500);
+    }
+    autoPlay(); // 此处需调用 否则页面加载完成 不会自动轮播
+    // 下面设置 鼠标进入 停止轮播
+    var container = document.querySelector(".container");
+    container.onmouseenter = function () {
+        clearInterval(timer);
+    };
+    container.onmouseleave = function () {
+        autoPlay();
+    };
+
+    // 下面设置 小圆点样式控制模块
+    var index = 0;
+    var y = document.getElementsByTagName("span");
+    function toOn() {
+        for (var i = 0; i < y.length; i++) {
+            y[i].className = "";
+        }
+        y[index].className = "on";
+    }
+    toOn(); // 此处加载完成调用 以免进入时显示第一张图片时 下方对应圆点不高亮
+    // 小圆点 点击控制模块
+    for (var i = 0;i < y.length; i++) {
+        (function (i) {
+            y[i].onclick = function () {
+                var dis = index - i;
+                imgBox.style.left = parseInt(imgBox.style.left)+dis*500+"px";
+                index = i;
+                toOn();
+            }
+        })(i);
+    }
+
+</script>
+</body>
+</html>
